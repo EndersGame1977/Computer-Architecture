@@ -2,6 +2,8 @@
 
 import sys
 
+# Add the HLT instruction definition to cpu.py so that you can refer to it by name instead of by numeric value.
+
 # operation codes:
 HLT = 0b00000001
 LDI = 0b10000010
@@ -135,3 +137,11 @@ class CPU:
 
             if not instruction_sets_pc:
                 self.pc += instruction_size
+
+    '''
+    TODO: Step 4: Implement the HLT instruction handler
+    In run() in your switch, exit the loop if a HLT instruction is encountered, regardless of whether or not there are more lines of code in the LS-8 program you loaded. We can consider HLT to be similar to Python's exit() in that we stop whatever we are doing, wherever we are.
+    '''
+
+    def op_HLT(self, operand_a, operand_b):
+        self.isPaused = True
