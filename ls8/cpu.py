@@ -36,7 +36,7 @@ class CPU:
             HLT: self.op_HLT,
             LDI: self.op_LDI,
             PRN: self.op_PRN,
-            # MUL: self.op_MUL,
+            MUL: self.op_MUL,
             # PUSH: self.op_PUSH,
             # POP: self.op_POP,
             # CALL: self.op_CALL,
@@ -48,41 +48,48 @@ class CPU:
     TODO: In CPU, add method ram_read() and ram_write() that access the RAM inside the CPU object.
     '''
 
-    # ram_read: Should accept the address to read and return the value stored there
     def ram_read(self, address):
+        '''
+        Should accept the address to read and return the value stored there
+        '''
         return self.ram[address]
 
-    # ram_write: Should accept a value to write, and the address to write it to
     def ram_write(self, value, address):
+        '''
+        Should accept a value to write, and the address to write it to
+        '''
         self.ram[address] = value
 
-    def load(self):
+    def load(self, filename):
         """Load a program into memory."""
+        '''
+        TODO: Step 7: Un-hardcode the machine code
+        In load(), you will now want to use those command line arguments to open a file, read in its contents line by line, and save appropriate data into RAM.
+        '''
 
         address = 0
 
-        # For now, we've just hardcoded a program:
-
-        program = [
-            # From print8.ls8
-            0b10000010,  # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111,  # PRN R0
-            0b00000000,
-            0b00000001,  # HLT
-        ]
-
-        for instruction in program:
-            self.ram[address] = instruction
+        fp = open(filename, "r")
+        for line in fp:
+            # As you process lines from the file, you should be on the lookout for blank lines (ignore them), and you should ignore everything after a #, since that's a comment.
+            instruction = line.split("#")[0].strip()
+            if instruction == "":
+                continue
+            # You'll have to convert the binary strings to integer values to store in RAM. The built-in int() function can do that when you specify a number base as the second argument
+            value = int(instruction, 2)
+            self.ram[address] = value
             address += 1
 
-    def alu(self, op, reg_a, reg_b):
+    def alu(self, op, register_a, register_b):
         """ALU operations."""
 
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
-        # elif op == "SUB": etc
+            self.register[register_a] += self.register[register_b]
+
+        # Multiply the values in two registers together and store the result in registerA.
+        elif op == "MUL":
+            self.register[register_a] *= self.register[register_b]
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -102,7 +109,7 @@ class CPU:
         ), end='')
 
         for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+            print(" %02X" % self.register[i], end='')
 
         print()
 
