@@ -18,6 +18,18 @@ class CPU:
         self.mdr = 0
         self.fl = 0
 
+    '''
+    TODO: In CPU, add method ram_read() and ram_write() that access the RAM inside the CPU object.
+    '''
+
+    # ram_read: Should accept the address to read and return the value stored there
+    def ram_read(self, address):
+        return self.ram[address]
+
+    # ram_write: Should accept a value to write, and the address to write it to
+    def ram_write(self, value, address):
+        self.ram[address] = value
+
     def load(self):
         """Load a program into memory."""
 
