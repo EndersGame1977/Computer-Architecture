@@ -138,10 +138,16 @@ class CPU:
             if not instruction_sets_pc:
                 self.pc += instruction_size
 
-    '''
-    TODO: Step 4: Implement the HLT instruction handler
-    In run() in your switch, exit the loop if a HLT instruction is encountered, regardless of whether or not there are more lines of code in the LS-8 program you loaded. We can consider HLT to be similar to Python's exit() in that we stop whatever we are doing, wherever we are.
-    '''
-
     def op_HLT(self, operand_a, operand_b):
+        '''
+        TODO: Step 4: Implement the HLT instruction handler
+        In run() in your switch, exit the loop if a HLT instruction is encountered, regardless of whether or not there are more lines of code in the LS-8 program you loaded. We can consider HLT to be similar to Python's exit() in that we stop whatever we are doing, wherever we are.
+        '''
         self.isPaused = True
+
+    def op_LDI(self, operand_a, operand_b):
+        '''
+        TODO: Step 5: Add the LDI instruction
+        Set the value of a register to an integer.
+        '''
+        self.register[operand_a] = operand_b
