@@ -36,12 +36,12 @@ class CPU:
             HLT: self.op_HLT,
             LDI: self.op_LDI,
             PRN: self.op_PRN,
-            MUL: self.op_MUL,
-            PUSH: self.op_PUSH,
-            POP: self.op_POP,
-            CALL: self.op_CALL,
-            RET: self.op_RET,
-            ADD: self.op_ADD
+            # MUL: self.op_MUL,
+            # PUSH: self.op_PUSH,
+            # POP: self.op_POP,
+            # CALL: self.op_CALL,
+            # RET: self.op_RET,
+            # ADD: self.op_ADD
         }
 
     '''
@@ -151,3 +151,11 @@ class CPU:
         Set the value of a register to an integer.
         '''
         self.register[operand_a] = operand_b
+
+    def op_PRN(self, operand_a, operand_b):
+        '''
+        TODO: Step 6: Add the PRN instruction
+        Print numeric value stored in the given register.
+        Print to the console the decimal integer value that is stored in the given register.
+        '''
+        print(self.register[operand_a])
