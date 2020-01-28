@@ -82,7 +82,9 @@ class CPU:
 
     def alu(self, op, register_a, register_b):
         """ALU operations."""
-
+        '''
+        TODO: Step 8: Implement a Multiply and Print the Result
+        '''
         if op == "ADD":
             self.register[register_a] += self.register[register_b]
 
@@ -115,12 +117,10 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-
         '''
         TODO: Step 3: Implement the core of CPU's run() method
         It needs to read the memory address that's stored in register PC, and store that result in IR, the Instruction Register.
         '''
-
         while not self.isPaused:
 
             # Using ram_read(), read the bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case the instruction needs them.
@@ -166,3 +166,10 @@ class CPU:
         Print to the console the decimal integer value that is stored in the given register.
         '''
         print(self.register[operand_a])
+
+    def op_MUL(self, operand_a, operand_b):
+        '''
+        TODO: Step 8: Implement a Multiply and Print the Result
+        MUL is the responsiblity of the ALU, so it would be nice if your code eventually called the alu() function with appropriate arguments to get the work done.
+        '''
+        self.alu("MUL", operand_a, operand_b)
