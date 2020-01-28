@@ -2,24 +2,6 @@
 
 import sys
 
-# TODO: Step 9: Beautify your run() loop
-# Add the HLT instruction definition to cpu.py so that you can refer to it by name instead of by numeric value.
-# operation codes:
-HLT = 0b00000001
-LDI = 0b10000010
-PRN = 0b01000111
-MUL = 0b10100010
-ADD = 0b10100000
-PUSH = 0b01000101
-POP = 0b01000110
-CALL = 0b01010000
-RET = 0b00010001
-
-# TODO: Step 10: Implement System Stack
-# stack pointer
-# The SP points at the value at the top of the stack (most recently pushed), or at address `F4` if the stack is empty.
-SP = 7
-
 
 class CPU:
     """Main CPU class."""
@@ -33,42 +15,52 @@ class CPU:
         self.register = [0] * 8
         # Also add properties for any internal registers
         self.pc = 0
-        self.ir = 0
-        self.mar = 0
-        self.mdr = 0
-        self.fl = 0
+        # TODO: Step 10: Implement System Stack
+        # stack pointer
+        # The self.sp points at the value at the top of the stack (most recently pushed), or at address `F4` if the stack is empty.
+        self.sp = 7
         # TODO: Step 3: Implement the core of CPU's run() method
         # Used in the handle_HLT() to stop the while loop in the run()
         self.isPaused = False
         # TODO: Step 10: Implement System Stack
         # Keyboard interrupt. This interrupt triggers when a key is pressed. The value of the key pressed is stored in address 0xF4
-        self.register[SP] = 0xf4
+        self.register[self.sp] = 0xf4
         # TODO: Step 9: Beautify your run() loop
+        # Add the HLT instruction definition to cpu.py so that you can refer to it by name instead of by numeric value.
         # Set up the branch table
-        self.branchtable = {}
-        self.branchtable[HLT] = self.handle_HLT
-        self.branchtable[LDI] = self.handle_LDI
-        self.branchtable[PRN] = self.handle_PRN
-        self.branchtable[MUL] = self.handle_MUL
-        # TODO: Step 10: Implement System Stack
-        self.branchtable[PUSH] = self.handle_PUSH
-        self.branchtable[POP] = self.handle_POP
+        self.branchtable = {
+            # TODO: Step 4: Implement the HLT instruction handler
+            0b00000001: self.HLT,
+            # TODO: Step 5: Add the LDI instruction
+            0b10000010: self.LDI,
+            # TODO: Step 6: Add the PRN instruction
+            0b01000111: self.PRN,
+            # TODO: Step 8: Implement a Multiply and Print the Result
+            0b10100010: self.MUL,
+            # TODO: Step 10: Implement System Stack
+            0b10100000: self.ADD,
+            0b01000101: self.PUSH,
+            # TODO: Step 11: Implement Subroutine Calls
+            0b01000110: self.POP,
+            0b01010000: self.CALL,
+            0b00010001: self.RET
+        }
 
     # TODO: Step 10: Implement System Stack
     def stack_push(self, value):
         ''' Push the value in the given register on the stack. '''
-        # Decrement the SP
-        self.register[SP] -= 1
-        # Copy the value in the given register to the address pointed to by SP
-        self.ram_write(self.register[SP], value)
+        # Decrement the self.sp
+        self.register[self.sp] -= 1
+        # Copy the value in the given register to the address pointed to by self.sp
+        self.ram_write(self.register[self.sp], value)
 
     # TODO: Step 10: Implement System Stack
     def stack_pop(self):
         ''' Pop the value at the top of the stack into the given register. '''
-        # Copy the value from the address pointed to by SP to the given register.
-        value = self.ram_read(self.register[SP])
-        # Increment SP
-        self.register[SP] += 1
+        # Copy the value from the address pointed to by self.sp to the given register.
+        value = self.ram_read(self.register[self.sp])
+        # Increment self.sp
+        self.register[self.sp] += 1
         return value
 
     # TODO: Step 2: Add RAM funcions
@@ -172,21 +164,21 @@ class CPU:
 
     # TODO: Step 9: Beautify your run() loop
     # TODO: Step 4: Implement the HLT instruction handler
-    def handle_HLT(self, operand_a, operand_b):
+    def HLT(self, operand_a, operand_b):
         '''
         In run() in your switch, exit the loop if a HLT instruction is encountered, regardless of whether or not there are more lines of code in the LS-8 program you loaded. We can consider HLT to be similar to Python's exit() in that we stop whatever we are doing, wherever we are.
         '''
         self.isPaused = True
 
     # TODO: Step 5: Add the LDI instruction
-    def handle_LDI(self, operand_a, operand_b):
+    def LDI(self, operand_a, operand_b):
         '''
         Set the value of a register to an integer.
         '''
         self.register[operand_a] = operand_b
 
     # TODO: Step 6: Add the PRN instruction
-    def handle_PRN(self, operand_a, operand_b):
+    def PRN(self, operand_a, operand_b):
         '''
         Print numeric value stored in the given register.
         Print to the console the decimal integer value that is stored in the given register.
@@ -194,18 +186,35 @@ class CPU:
         print(self.register[operand_a])
 
     # TODO: Step 8: Implement a Multiply and Print the Result
-    def handle_MUL(self, operand_a, operand_b):
+    def MUL(self, operand_a, operand_b):
         '''
         MUL is the responsiblity of the ALU, so it would be nice if your code eventually called the alu() function with appropriate arguments to get the work done
         '''
         self.alu("MUL", operand_a, operand_b)
 
+    def ADD(self, operand_a, operand_b):
+        self.alu("ADD", operand_a, operand_b)
+
     # TODO: Step 10: Implement System Stack
-    def handle_PUSH(self, operand_a, operand_b):
+    def PUSH(self, operand_a, operand_b):
         ''' Push the value in the given register on the stack. '''
         self.stack_push(self.register[operand_a])
 
     # TODO: Step 10: Implement System Stack
-    def handle_POP(self, operand_a, operand_b):
+    def POP(self, operand_a, operand_b):
         ''' Pop the value at the top of the stack into the given register. '''
         self.register[operand_a] = self.stack_pop()
+
+    # TODO: Step 11: Implement Subroutine Calls
+    def CALL(self, operand_a, operand_b):
+        ''' Calls a subroutine (function) at the address stored in the register. '''
+        # The address of the instruction directly after CALL is pushed onto the stack. This allows us to return to where we left off when the subroutine finishes executing.
+        self.stack_push(self.pc + 2)
+        # The PC is set to the address stored in the given register. We jump to that location in RAM and execute the first instruction in the subroutine. The PC can move forward or backwards from its current location.
+        self.pc = self.register[operand_a]
+
+    # TODO: Step 11: Implement Subroutine Calls
+    def RET(self, operand_a, operand_b):
+        ''' Return from subroutine. '''
+        # Pop the value from the top of the stack and store it in the PC.
+        self.pc = self.stack_pop()
