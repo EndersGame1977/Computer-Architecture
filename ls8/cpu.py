@@ -4,6 +4,7 @@ import sys
 
 # Add the HLT instruction definition to cpu.py so that you can refer to it by name instead of by numeric value.
 
+# TODO: Step 9: Beautify your run() loop
 # operation codes:
 HLT = 0b00000001
 LDI = 0b10000010
@@ -31,18 +32,13 @@ class CPU:
         self.mdr = 0
         self.fl = 0
         self.isPaused = False
-
-        self.dispatch = {
-            HLT: self.op_HLT,
-            LDI: self.op_LDI,
-            PRN: self.op_PRN,
-            MUL: self.op_MUL,
-            # PUSH: self.op_PUSH,
-            # POP: self.op_POP,
-            # CALL: self.op_CALL,
-            # RET: self.op_RET,
-            # ADD: self.op_ADD
-        }
+        # TODO: Step 9: Beautify your run() loop
+        # Set up the branch table
+        self.branchtable = {}
+        self.branchtable[HLT] = self.handle_HLT
+        self.branchtable[LDI] = self.handle_LDI
+        self.branchtable[PRN] = self.handle_PRN
+        self.branchtable[MUL] = self.handle_MUL
 
     '''
     TODO: In CPU, add method ram_read() and ram_write() that access the RAM inside the CPU object.
@@ -129,8 +125,8 @@ class CPU:
             operand_b = self.ram_read(self.pc+2)
 
             # Depending on the value of the opcode, perform the actions needed for the instruction per the LS-8 spec. Maybe an if-elif cascade...?
-            if ir in self.dispatch:
-                self.dispatch[ir](operand_a, operand_b)
+            if ir in self.branchtable:
+                self.branchtable[ir](operand_a, operand_b)
             else:
                 raise Exception(
                     f'Unknown Instruction {bin(ir)} at {hex(self.pc)}')
@@ -145,21 +141,22 @@ class CPU:
             if not instruction_sets_pc:
                 self.pc += instruction_size
 
-    def op_HLT(self, operand_a, operand_b):
+    # TODO: Step 9: Beautify your run() loop
+    def handle_HLT(self, operand_a, operand_b):
         '''
         TODO: Step 4: Implement the HLT instruction handler
         In run() in your switch, exit the loop if a HLT instruction is encountered, regardless of whether or not there are more lines of code in the LS-8 program you loaded. We can consider HLT to be similar to Python's exit() in that we stop whatever we are doing, wherever we are.
         '''
         self.isPaused = True
 
-    def op_LDI(self, operand_a, operand_b):
+    def handle_LDI(self, operand_a, operand_b):
         '''
         TODO: Step 5: Add the LDI instruction
         Set the value of a register to an integer.
         '''
         self.register[operand_a] = operand_b
 
-    def op_PRN(self, operand_a, operand_b):
+    def handle_PRN(self, operand_a, operand_b):
         '''
         TODO: Step 6: Add the PRN instruction
         Print numeric value stored in the given register.
@@ -167,7 +164,7 @@ class CPU:
         '''
         print(self.register[operand_a])
 
-    def op_MUL(self, operand_a, operand_b):
+    def handle_MUL(self, operand_a, operand_b):
         '''
         TODO: Step 8: Implement a Multiply and Print the Result
         MUL is the responsiblity of the ALU, so it would be nice if your code eventually called the alu() function with appropriate arguments to get the work done
