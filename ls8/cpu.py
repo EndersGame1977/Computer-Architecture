@@ -166,3 +166,10 @@ class CPU:
         Print to the console the decimal integer value that is stored in the given register.
         '''
         print(self.register[operand_a])
+
+    def op_MUL(self, operand_a, operand_b):
+        '''
+        TODO: Step 8: Implement a Multiply and Print the Result
+        MUL is the responsiblity of the ALU, so it would be nice if your code eventually called the alu() function with appropriate arguments to get the work done
+        '''
+        self.alu("MUL", operand_a, operand_b)
